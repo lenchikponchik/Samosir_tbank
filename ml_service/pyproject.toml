@@ -1,0 +1,10 @@
+[project]
+name = "zarabotok-ml-service"
+version = "0.1.0"
+description = "ML prediction microservice (stub) for Zarabotok"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.7.0",
+]
