@@ -4,11 +4,13 @@ Revision ID: 001_initial
 Revises: None
 Create Date: 2025-01-01 00:00:00.000000
 """
+
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 revision: str = "001_initial"
 down_revision: Union[str, None] = None
@@ -29,7 +31,13 @@ def upgrade() -> None:
     op.create_table(
         "resumes",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "user_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("job_title", sa.String(255), nullable=False),
         sa.Column("experience_years", sa.Numeric(4, 1), nullable=False),
         sa.Column("skills", postgresql.JSONB, nullable=False, server_default="[]"),
@@ -44,7 +52,13 @@ def upgrade() -> None:
     op.create_table(
         "salary_estimates",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("resume_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("resumes.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "resume_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("resumes.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("p25_salary", sa.Integer, nullable=False),
         sa.Column("p50_salary", sa.Integer, nullable=False),
         sa.Column("p75_salary", sa.Integer, nullable=False),
@@ -56,7 +70,13 @@ def upgrade() -> None:
     op.create_table(
         "recommendations",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("estimate_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("salary_estimates.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "estimate_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("salary_estimates.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("priority", sa.Integer, nullable=False),
         sa.Column("category", sa.String(50), nullable=False),
         sa.Column("title", sa.String(500), nullable=False),

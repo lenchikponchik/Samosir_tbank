@@ -90,9 +90,7 @@ async def get_estimate(
     from app.schemas.estimate import MarketInsights, SalaryRange, ShapContribution
     from app.schemas.recommendation import RecommendationResponse
 
-    result = await db.execute(
-        select(SalaryEstimate).where(SalaryEstimate.id == estimate_id)
-    )
+    result = await db.execute(select(SalaryEstimate).where(SalaryEstimate.id == estimate_id))
     estimate = result.scalar_one_or_none()
     if not estimate:
         raise HTTPException(status_code=404, detail="Estimate not found")
@@ -113,9 +111,7 @@ async def get_estimate(
             top_missing_skills=[],
             demand_trend="stable",
         ),
-        shap_contributions=[
-            ShapContribution(feature=k, contribution_rub=int(v)) for k, v in shap.items()
-        ],
+        shap_contributions=[ShapContribution(feature=k, contribution_rub=int(v)) for k, v in shap.items()],
         recommendations=[
             RecommendationResponse(
                 id=r.id,

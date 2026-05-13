@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,8 +26,6 @@ async def get_recommendations_by_estimate(
 ) -> list[Recommendation]:
     """Retrieve all recommendations linked to a specific salary estimate."""
     result = await db.execute(
-        select(Recommendation)
-        .where(Recommendation.estimate_id == estimate_id)
-        .order_by(Recommendation.priority)
+        select(Recommendation).where(Recommendation.estimate_id == estimate_id).order_by(Recommendation.priority)
     )
     return list(result.scalars().all())

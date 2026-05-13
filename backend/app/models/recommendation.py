@@ -14,9 +14,7 @@ class Recommendation(Base):
 
     __tablename__ = "recommendations"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     estimate_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("salary_estimates.id", ondelete="CASCADE"), nullable=False, index=True
     )

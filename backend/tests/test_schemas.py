@@ -3,16 +3,13 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.resume import ExperienceEntry, ResumeCreate, ResumeUpdate
 from app.schemas.estimate import (
     EstimateRequest,
-    EstimateResponse,
     MarketInsights,
     SalaryRange,
-    ShapContribution,
-    EstimateHistoryItem,
 )
 from app.schemas.recommendation import RecommendationResponse
+from app.schemas.resume import ExperienceEntry, ResumeCreate, ResumeUpdate
 
 
 class TestExperienceEntry:

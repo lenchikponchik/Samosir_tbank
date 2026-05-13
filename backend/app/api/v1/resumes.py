@@ -84,8 +84,7 @@ async def update_resume(
     update_data = data.model_dump(exclude_unset=True)
     if "experience_entries" in update_data and update_data["experience_entries"] is not None:
         update_data["experience_entries"] = [
-            e if isinstance(e, dict) else e.model_dump()
-            for e in update_data["experience_entries"]
+            e if isinstance(e, dict) else e.model_dump() for e in update_data["experience_entries"]
         ]
 
     for field, value in update_data.items():

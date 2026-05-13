@@ -15,9 +15,7 @@ class Resume(Base):
 
     __tablename__ = "resumes"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -25,18 +23,14 @@ class Resume(Base):
     experience_years: Mapped[float] = mapped_column(Numeric(4, 1), nullable=False)
     skills: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
-    education_level: Mapped[str] = mapped_column(
-        String(50), nullable=False, default="none"
-    )
+    education_level: Mapped[str] = mapped_column(String(50), nullable=False, default="none")
     experience_entries: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User", back_populates="resumes")

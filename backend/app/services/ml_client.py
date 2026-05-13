@@ -71,9 +71,7 @@ class MLClient:
             logger.warning("ML service unavailable, using fallback: %s", exc)
             return self._fallback_prediction(experience_years, skills)
 
-    def _fallback_prediction(
-        self, experience_years: float, skills: list[str]
-    ) -> MLPrediction:
+    def _fallback_prediction(self, experience_years: float, skills: list[str]) -> MLPrediction:
         """Simple heuristic fallback when ML service is down."""
         base = 60_000
         exp_bonus = int(experience_years * 12_000)

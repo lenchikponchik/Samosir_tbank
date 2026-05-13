@@ -16,16 +16,12 @@ class AuditLogResume(Base):
     __tablename__ = "audit_log_resumes"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    resume_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), nullable=False, index=True
-    )
+    resume_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     action_type: Mapped[str] = mapped_column(String(10), nullable=False)
     old_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     new_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     changed_fields: Mapped[str | None] = mapped_column(Text, nullable=True)
-    performed_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
+    performed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     resume = relationship("Resume", back_populates="audit_logs")

@@ -25,9 +25,7 @@ class VacancySearchService:
     ) -> dict:
         """Find vacancies matching title/skills and compute market stats."""
         # Build query with ILIKE for title matching
-        query = select(Vacancy).where(
-            Vacancy.title.ilike(f"%{job_title}%")
-        )
+        query = select(Vacancy).where(Vacancy.title.ilike(f"%{job_title}%"))
 
         if location:
             query = query.where(Vacancy.location.ilike(f"%{location}%"))
@@ -41,7 +39,6 @@ class VacancySearchService:
             return self._empty_insights()
 
         # Compute stats
-        salaries = [v.salary_net for v in vacancies if v.salary_net]
         all_required_skills: list[str] = []
         for v in vacancies:
             if isinstance(v.skills_required, list):

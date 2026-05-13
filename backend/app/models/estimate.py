@@ -15,9 +15,7 @@ class SalaryEstimate(Base):
 
     __tablename__ = "salary_estimates"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     resume_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("resumes.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -25,12 +23,8 @@ class SalaryEstimate(Base):
     p50_salary: Mapped[int] = mapped_column(Integer, nullable=False)
     p75_salary: Mapped[int] = mapped_column(Integer, nullable=False)
     shap_values: Mapped[dict] = mapped_column(JSONB, nullable=True)
-    calculated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
+    calculated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     resume = relationship("Resume", back_populates="estimates")
-    recommendations = relationship(
-        "Recommendation", back_populates="estimate", lazy="selectin"
-    )
+    recommendations = relationship("Recommendation", back_populates="estimate", lazy="selectin")

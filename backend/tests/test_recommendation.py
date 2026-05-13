@@ -1,9 +1,9 @@
 """Tests for recommendation service."""
 
-import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 import uuid
+from unittest.mock import patch
 
+import pytest
 from app.services.recommendation import RecommendationService
 
 

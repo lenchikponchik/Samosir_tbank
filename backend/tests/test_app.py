@@ -1,9 +1,5 @@
 """Tests for the FastAPI application and health endpoint."""
 
-from fastapi.testclient import TestClient
-
-from app.main import app
-
 
 class TestHealthEndpoint:
     """Test basic application health."""

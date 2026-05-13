@@ -32,17 +32,13 @@ async def get_resume_history(
     """
     # Get all estimates for this resume
     estimates_result = await db.execute(
-        select(SalaryEstimate)
-        .where(SalaryEstimate.resume_id == resume_id)
-        .order_by(SalaryEstimate.calculated_at.asc())
+        select(SalaryEstimate).where(SalaryEstimate.resume_id == resume_id).order_by(SalaryEstimate.calculated_at.asc())
     )
     estimates = estimates_result.scalars().all()
 
     # Get audit logs for change context
     audit_result = await db.execute(
-        select(AuditLogResume)
-        .where(AuditLogResume.resume_id == resume_id)
-        .order_by(AuditLogResume.performed_at.asc())
+        select(AuditLogResume).where(AuditLogResume.resume_id == resume_id).order_by(AuditLogResume.performed_at.asc())
     )
     audits = audit_result.scalars().all()
 

@@ -25,9 +25,7 @@ class ResumeCreate(BaseModel):
     experience_years: float = Field(..., ge=0, le=50, examples=[5.0])
     skills: list[str] = Field(..., min_length=1, examples=[["Python", "FastAPI", "PostgreSQL"]])
     location: str = Field(..., min_length=1, max_length=255, examples=["Москва"])
-    education_level: Literal["none", "bachelor", "master", "phd"] = Field(
-        default="none", examples=["bachelor"]
-    )
+    education_level: Literal["none", "bachelor", "master", "phd"] = Field(default="none", examples=["bachelor"])
     experience_entries: list[ExperienceEntry] = Field(default_factory=list)
 
 

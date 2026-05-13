@@ -12,8 +12,8 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """Ты — эксперт по рынку труда и карьерный консультант. 
-Твоя задача: на основе профиля соискателя, предсказанной зарплатной вилки и SHAP-анализа 
+SYSTEM_PROMPT = """Ты — эксперт по рынку труда и карьерный консультант.
+Твоя задача: на основе профиля соискателя, предсказанной зарплатной вилки и SHAP-анализа
 сгенерировать конкретные, измеримые рекомендации по улучшению резюме.
 
 ПРАВИЛА:
@@ -101,7 +101,7 @@ class RecommendationService:
         return f"""ПРОФИЛЬ СОИСКАТЕЛЯ:
 - Должность: {job_title}
 - Опыт: {experience_years} лет
-- Навыки: {', '.join(skills)}
+- Навыки: {", ".join(skills)}
 - Регион: {location}
 
 ПРЕДСКАЗАННАЯ МЕДИАНА ЗАРПЛАТЫ: {salary_p50:,} руб.
@@ -121,15 +121,17 @@ SHAP-АНАЛИЗ (вклад признаков в зарплату):
         sorted_shap = sorted(shap_values.items(), key=lambda x: x[1])
 
         for i, (feature, value) in enumerate(sorted_shap[:3], start=1):
-            recommendations.append({
-                "id": str(uuid.uuid4()),
-                "priority": i,
-                "category": "hard_skill",
-                "title": f"Улучшите показатель: {feature}",
-                "description": f"Признак '{feature}' снижает вашу оценку на {abs(int(value)):,} руб.",
-                "impact": f"+{abs(int(value)):,} руб. к медиане",
-                "action": f"Добавьте информацию о '{feature}' в ваше резюме.",
-            })
+            recommendations.append(
+                {
+                    "id": str(uuid.uuid4()),
+                    "priority": i,
+                    "category": "hard_skill",
+                    "title": f"Улучшите показатель: {feature}",
+                    "description": f"Признак '{feature}' снижает вашу оценку на {abs(int(value)):,} руб.",
+                    "impact": f"+{abs(int(value)):,} руб. к медиане",
+                    "action": f"Добавьте информацию о '{feature}' в ваше резюме.",
+                }
+            )
 
         return recommendations
 

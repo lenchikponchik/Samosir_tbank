@@ -3,14 +3,13 @@
 import asyncio
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import pool
-from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app.db.session import Base
-from app.config import settings
 # Import all models so they are registered with Base.metadata
 import app.models  # noqa: F401
+from alembic import context
+from app.config import settings
+from app.db.session import Base
 
 config = context.config
 if config.config_file_name is not None:
@@ -44,6 +43,7 @@ def do_run_migrations(connection) -> None:
 async def run_async_migrations() -> None:
     """Run migrations in 'online' mode with async engine."""
     from sqlalchemy.ext.asyncio import create_async_engine
+
     print(f"DEBUG URL IN ENV.PY: {settings.DATABASE_URL}")
     connectable = create_async_engine(
         settings.DATABASE_URL,

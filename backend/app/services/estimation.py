@@ -92,8 +92,7 @@ class EstimationService:
 
         # Step 5: Build response
         shap_contributions = [
-            ShapContribution(feature=feat, contribution_rub=int(val))
-            for feat, val in prediction.shap_values.items()
+            ShapContribution(feature=feat, contribution_rub=int(val)) for feat, val in prediction.shap_values.items()
         ]
 
         recommendation_responses = [
