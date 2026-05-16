@@ -1,59 +1,36 @@
-# ML Service — Заработок
+# GPT-OSS-Compatible Model Service
 
-## Назначение
+This service is the replaceable model boundary for the backend.
 
-Микросервис предсказания зарплат на основе ML-моделей. Принимает вектор профиля кандидата, возвращает квантильную вилку (p25, p50, p75) + SHAP-значения + контрфактуалы.
+The important endpoint for the MVP is:
 
-## Текущий статус
-
-⚠️ **Используется заглушка (StubPredictor)** — детерминированные эвристики вместо реальной модели.
-
-## API контракт
-
-### `POST /predict`
-
-**Request:**
-```json
-{
-  "job_title": "Senior Python Developer",
-  "experience_years": 5.0,
-  "skills": ["Python", "FastAPI", "PostgreSQL"],
-  "location": "Москва",
-  "education_level": "bachelor"
-}
+```text
+POST /analyze
 ```
 
-**Response:**
-```json
-{
-  "p25_salary": 120000,
-  "p50_salary": 160000,
-  "p75_salary": 216000,
-  "shap_values": {
-    "experience_years": 50000.0,
-    "skills:Python": 10000.0,
-    "location:Москва": 24000.0
-  },
-  "counterfactuals": [
-    {
-      "change_description": "Добавьте навык Rust",
-      "feature_changed": "skills",
-      "new_value": "Rust",
-      "estimated_salary_increase": 23400
-    }
-  ]
-}
-```
+Backend sends one payload containing:
 
-## Инструкции для ML-разработчика
+- `request_hash`
+- `profile`
+- `segment`
+- `candidate_vacancies`
+- `rules`
 
-1. **Замените `StubPredictor`** в `app/predictor.py` на реальный инференс CatBoost/LightGBM
-2. **Загрузка моделей**: поместите `.pkl` / `.onnx` файлы в `app/models/`, загружайте в `lifespan` хуке в `main.py`
-3. **SHAP**: используйте `shap.TreeExplainer` для генерации SHAP-значений
-4. **Контрфактуалы**: используйте DiCE для генерации путей улучшения
-5. **НЕ меняйте `PredictionRequest` / `PredictionResponse`** в `app/schemas.py` без согласования с backend
+The service must return the strict GPT-OSS salary result JSON:
 
-## Запуск
+- `market_sample`
+- `salary_range`
+- `confidence`
+- `matched_skills`
+- `missing_skills`
+- `factor_analysis`
+- `recommendations`
+
+The current implementation is a local stub so the backend contract can be tested before the real `gpt-oss-20b` integration is ready. The real model should replace `StubPredictor.analyze()` in `app/predictor.py` while keeping the response shape stable.
+
+`POST /predict` is still present only as a legacy compatibility endpoint for old tests/scripts. New backend code uses `/analyze`.
+
+Run locally:
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload

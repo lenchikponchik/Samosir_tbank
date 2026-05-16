@@ -11,6 +11,7 @@ TODO for ML developer:
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from app.schemas import Counterfactual, PredictionRequest, PredictionResponse
 
@@ -130,6 +131,128 @@ class StubPredictor:
             shap_values=shap_values,
             counterfactuals=counterfactuals,
         )
+
+    def analyze(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Return a GPT-OSS-compatible JSON response for local development."""
+        profile = payload["profile"]
+        candidate_vacancies = payload["candidate_vacancies"]
+        used_vacancies = candidate_vacancies[: min(5, len(candidate_vacancies))]
+
+        salaries = [_salary_midpoint(v) for v in used_vacancies]
+        salaries = sorted(s for s in salaries if s > 0)
+        if not salaries:
+            salaries = [100_000]
+
+        p25 = _percentile(salaries, 0.25)
+        p50 = _percentile(salaries, 0.50)
+        p75 = _percentile(salaries, 0.75)
+
+        profile_skills = {str(skill).casefold() for skill in profile.get("skills", [])}
+        required_skills: list[str] = []
+        for vacancy in used_vacancies:
+            required_skills.extend(vacancy.get("skills_required") or [])
+
+        matched_skills = []
+        missing_skills = []
+        seen_required: set[str] = set()
+        for skill in required_skills:
+            normalized = str(skill).casefold()
+            if normalized in seen_required:
+                continue
+            seen_required.add(normalized)
+            if normalized in profile_skills:
+                matched_skills.append(str(skill))
+            elif len(missing_skills) < 3:
+                missing_skills.append(
+                    {
+                        "skill": str(skill),
+                        "impact": "medium",
+                        "reason": "Skill appears in the candidate vacancies provided to the model.",
+                    }
+                )
+
+        if missing_skills:
+            recommendations = [
+                {
+                    "priority": index + 1,
+                    "type": "skill_gap",
+                    "title": f"Add evidence for {item['skill']}",
+                    "resume_change": f"Add {item['skill']} only with real experience and describe a concrete project.",
+                    "expected_salary_effect": None,
+                }
+                for index, item in enumerate(missing_skills)
+            ]
+        else:
+            recommendations = [
+                {
+                    "priority": 1,
+                    "type": "experience_detail",
+                    "title": "Add measurable project details",
+                    "resume_change": "Describe scope, load, business result, and technologies for the strongest project.",
+                    "expected_salary_effect": None,
+                }
+            ]
+
+        used_ids = [str(v["id"]) for v in used_vacancies]
+        excluded = [
+            {"id": str(v["id"]), "reason": "Not used by the local stub because of the context limit."}
+            for v in candidate_vacancies[len(used_vacancies) :]
+        ]
+
+        return {
+            "request_hash": payload["request_hash"],
+            "segment": {
+                "segment_key": payload["segment"]["segment_key"],
+                "segment_data_version": payload["segment"]["segment_data_version"],
+            },
+            "market_sample": {
+                "candidate_vacancies_received": len(candidate_vacancies),
+                "vacancies_used_for_estimation": len(used_vacancies),
+                "used_vacancy_ids": used_ids,
+                "excluded_vacancies": excluded,
+                "salary_quantiles": {"p25": p25, "p50": p50, "p75": p75},
+            },
+            "salary_range": {
+                "min": p25,
+                "median": p50,
+                "max": p75,
+                "currency": "RUB",
+            },
+            "confidence": {
+                "score": min(0.9, 0.45 + len(used_vacancies) / 100),
+                "level": "medium" if len(used_vacancies) < 20 else "high",
+                "reason": f"Local stub used {len(used_vacancies)} candidate vacancies.",
+            },
+            "matched_skills": matched_skills,
+            "missing_skills": missing_skills,
+            "factor_analysis": [
+                {
+                    "factor": f"Experience: {profile.get('experience_years')} years",
+                    "impact": "neutral",
+                    "explanation": "Temporary model stub; final interpretation belongs to gpt-oss-20b.",
+                }
+            ],
+            "recommendations": recommendations,
+        }
+
+
+def _salary_midpoint(vacancy: dict[str, Any]) -> int:
+    salary_min = vacancy.get("salary_min_net")
+    salary_max = vacancy.get("salary_max_net")
+    if salary_min and salary_max:
+        return int((int(salary_min) + int(salary_max)) / 2)
+    if salary_min:
+        return int(salary_min)
+    if salary_max:
+        return int(salary_max)
+    return 0
+
+
+def _percentile(values: list[int], q: float) -> int:
+    if len(values) == 1:
+        return values[0]
+    index = round((len(values) - 1) * q)
+    return values[index]
 
 
 predictor = StubPredictor()

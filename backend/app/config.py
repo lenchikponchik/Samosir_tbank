@@ -12,7 +12,16 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    # ML Service
+    # GPT-OSS model service. The current ml_service container is the integration point
+    # that can later be replaced by the real gpt-oss-20b runner.
+    GPT_OSS_SERVICE_URL: str = "http://ml_service:8001"
+    GPT_OSS_ANALYZE_PATH: str = "/analyze"
+    GPT_OSS_MODEL_NAME: str = "gpt-oss-20b"
+    GPT_OSS_MODEL_VERSION: str = "gpt-oss-20b-salary-v1"
+    GPT_OSS_PROMPT_VERSION: str = "salary_prompt_v1"
+    GPT_OSS_TIMEOUT: float = 60.0
+
+    # Legacy ML Service values kept for compatibility with old local scripts.
     ML_SERVICE_URL: str = "http://ml_service:8001"
     ML_SERVICE_TIMEOUT: float = 30.0
 

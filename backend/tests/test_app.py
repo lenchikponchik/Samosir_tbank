@@ -22,10 +22,10 @@ class TestHealthEndpoint:
         assert schema["info"]["title"] == "Заработок API"
         assert schema["info"]["version"] == "0.1.0"
 
-    def test_openapi_has_estimate_endpoint(self, client):
+    def test_openapi_has_analyze_endpoint(self, client):
         response = client.get("/openapi.json")
         paths = response.json()["paths"]
-        assert "/api/v1/estimates" in paths
+        assert "/api/v1/analyze" in paths
 
     def test_openapi_has_resume_endpoints(self, client):
         response = client.get("/openapi.json")
@@ -33,7 +33,7 @@ class TestHealthEndpoint:
         assert "/api/v1/resumes" in paths
         assert "/api/v1/resumes/{resume_id}" in paths
 
-    def test_openapi_has_history_endpoint(self, client):
+    def test_openapi_does_not_expose_legacy_estimates(self, client):
         response = client.get("/openapi.json")
         paths = response.json()["paths"]
-        assert "/api/v1/history/resume/{resume_id}" in paths
+        assert "/api/v1/estimates" not in paths

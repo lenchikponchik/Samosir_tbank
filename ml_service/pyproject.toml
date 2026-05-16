@@ -1,7 +1,7 @@
 [project]
 name = "zarabotok-ml-service"
 version = "0.1.0"
-description = "ML prediction microservice (stub) for Zarabotok"
+description = "GPT-OSS-compatible model microservice (stub) for Zarabotok"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.111.0",

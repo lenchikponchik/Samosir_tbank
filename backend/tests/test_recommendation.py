@@ -4,6 +4,7 @@ import uuid
 from unittest.mock import patch
 
 import pytest
+
 from app.services.recommendation import RecommendationService
 
 
