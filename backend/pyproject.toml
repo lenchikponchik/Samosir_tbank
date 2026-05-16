@@ -17,6 +17,9 @@ dependencies = [
     "python-dotenv>=1.0.0",
 ]
 
+[project.scripts]
+seed-test-data = "app.seed_test_data:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.2.0",

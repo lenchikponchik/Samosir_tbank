@@ -75,6 +75,32 @@ API docs:
 http://localhost:8000/docs
 ```
 
+Seed local test vacancies:
+
+```bash
+docker-compose exec backend alembic upgrade head
+docker-compose exec backend python -m app.seed_test_data
+```
+
+Then this demo profile should hit the seeded backend segment:
+
+```json
+{
+  "profile": {
+    "title": "Python Backend Developer",
+    "experience_years": 3,
+    "location": "Москва",
+    "skills": ["Python", "FastAPI", "PostgreSQL"],
+    "resume_text": "Разрабатывал backend-сервисы на FastAPI.",
+    "current_salary": 150000
+  },
+  "options": {
+    "target_salary": 250000,
+    "force_refresh": false
+  }
+}
+```
+
 Run tests:
 
 ```bash
